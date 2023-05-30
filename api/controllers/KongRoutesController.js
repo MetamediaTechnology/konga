@@ -20,6 +20,7 @@ module.exports = _.merge(_.cloneDeep(require('../base/Controller')), {
     let keyAuthPlugin;
     let hmacAuthPlugin;
     let oauth2Plugin;
+    let keyAuthRefererPlugin;
 
 
     sails.log("KongRoutesController:consumers called");
@@ -43,6 +44,7 @@ module.exports = _.merge(_.cloneDeep(require('../base/Controller')), {
     keyAuthPlugin = _.filter(plugins.data, item => item.name === 'key-auth')[0];
     hmacAuthPlugin = _.filter(plugins.data, item => item.name === 'hmac-auth')[0];
     oauth2Plugin = _.filter(plugins.data, item => item.name === 'oauth2')[0];
+    keyAuthRefererPlugin = _.filter(plugins.data, item => item.name === 'key-auth-referer')[0];
 
     sails.log("routeAclPlugin",routeAclPlugin)
     sails.log("jwtPlugin",jwtPlugin)
@@ -50,9 +52,10 @@ module.exports = _.merge(_.cloneDeep(require('../base/Controller')), {
     sails.log("keyAuthPlugin",keyAuthPlugin)
     sails.log("hmacAuthPlugin",hmacAuthPlugin)
     sails.log("oauth2Plugin",oauth2Plugin)
+    sails.log("keyAuthRefererPlugin", keyAuthRefererPlugin)
 
     let aclConsumerIds;
-    let authenticationPlugins = _.filter(plugins.data, item => ['jwt','basic-auth','key-auth','hmac-auth','oauth2'].indexOf(item.name) > -1);
+    let authenticationPlugins = _.filter(plugins.data, item => ['jwt','basic-auth','key-auth','hmac-auth','oauth2', 'key-auth-referer'].indexOf(item.name) > -1);
     authenticationPlugins = _.map(authenticationPlugins, item => item.name);
     sails.log("authenticationPlugins",authenticationPlugins);
 
@@ -97,12 +100,14 @@ module.exports = _.merge(_.cloneDeep(require('../base/Controller')), {
     if(hmacAuthPlugin) hmacAuths = await KongService.fetch(`/hmac-auths`, req);
     if(oauth2Plugin) oauth2 = await KongService.fetch(`/oauth2`, req);
     if(basicAuthPlugin) basicAuths = await KongService.fetch(`/basic-auths`, req);
+    if(keyAuthRefererPlugin) keyAuthReferers = await KongService.fetch(`/key-auth-referers`, req);
 
     sails.log("jwts",jwts)
     sails.log("keyAuths",keyAuths)
     sails.log("hmacAuths",hmacAuths)
     sails.log("oauth2",oauth2)
     sails.log("basicAuths",basicAuths)
+    sails.log("keyAuthReferers", keyAuthReferers)
 
 
     let jwtConsumerIds = jwts ? _.map(jwts.data, item => item.consumer.id) : [];
@@ -110,12 +115,14 @@ module.exports = _.merge(_.cloneDeep(require('../base/Controller')), {
     let hmacAuthConsumerIds = hmacAuths ? _.map(hmacAuths.data, item => item.consumer.id) : [];
     let oauth2ConsumerIds = oauth2 ? _.map(oauth2.data, item => item.consumer.id) : [];
     let basicAuthConsumerIds = basicAuths ? _.map(basicAuths.data, item => item.consumer.id) : [];
+    let keyAuthRefererConsumerIds = keyAuthReferers ? _.map(keyAuthReferers.data, item => item.consumer.id) : [];
 
     sails.log("jwtConsumerIds",jwtConsumerIds)
     sails.log("keyAuthConsumerIds",keyAuthConsumerIds)
     sails.log("hmacAuthConsumerIds",hmacAuthConsumerIds)
     sails.log("oauth2ConsumerIds",oauth2ConsumerIds)
     sails.log("basicAuthConsumerIds",basicAuthConsumerIds)
+    sails.log("keyAuthRefererConsumerIds", keyAuthRefererConsumerIds)
 
     let consumerIds;
     let authenticationPluginsConsumerIds = _.uniq([
@@ -123,7 +130,8 @@ module.exports = _.merge(_.cloneDeep(require('../base/Controller')), {
       ...keyAuthConsumerIds,
       ...hmacAuthConsumerIds,
       ...oauth2ConsumerIds,
-      ...basicAuthConsumerIds
+      ...basicAuthConsumerIds,
+      ...keyAuthRefererConsumerIds
     ]);
 
 
@@ -164,6 +172,9 @@ module.exports = _.merge(_.cloneDeep(require('../base/Controller')), {
         }
         if(basicAuths && _.filter(basicAuths.data,item => item.consumer.id === consumer.id).length) {
           plugins.push('basic-auth')
+        }
+        if(keyAuthReferers && _.filter(keyAuthReferers.data, item => item.consumer.id === consumer.id).length) {
+          plugins.push('key-auth-referer')
         }
         consumer.plugins = plugins;
 

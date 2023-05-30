@@ -51,8 +51,6 @@
             })
 
             return pluginGroups;
-
-
           });
         },
 
@@ -74,6 +72,9 @@
                   },
                   "key-auth": {
                     description: "Add a key authentication to your APIs"
+                  },
+                  "key-auth-referer": {
+                    description: "Add a key authentication and referers to your APIs"
                   },
                   "oauth2": {
                     description: "Add an OAuth 2.0 authentication to your APIs"
@@ -187,9 +188,11 @@
                     description: "Expose metrics related to Kong and proxied upstream services in Prometheus exposition format"
                   },
                   "zipkin": {
-                    description: "Propagate Zipkin distributed tracing spans, and report spans to a Zipkin server."
+                    description: "Propagate Zipkin distributed tracing spans, and report spans to a Zipkin server"
                   },
-
+                  "opentelemetry": {
+                    description: "Propagate spans and report space to a backend server through OTLP protocol"
+                  },
                 }
               },
               {
@@ -206,6 +209,12 @@
                   },
                   "correlation-id": {
                     description: "Correlate requests and responses using a unique ID"
+                  },
+                  "grpc-gateway": {
+                    description: "Access gRPC services through HTTP REST"
+                  },
+                  "grpc-web": {
+                    description: "Allow browser clients to call gRPC services"
                   },
                 }
               },
@@ -502,6 +511,21 @@
             "key-auth": {
               meta: {
                 description: 'Add Key Authentication (also referred to as an API key) to your APIs. Consumers then add their key either in a querystring parameter or a header to authenticate their requests.'
+              },
+              'key_names': {
+                type: 'text',
+                value: 'apikey',
+                help: 'Describes an array of comma separated parameter names where the plugin will look for a key. The client must send the authentication key in one of those key names, and the plugin will try to read the credential from a header or the querystring parameter with the same name.'
+              },
+              'hide_credentials': {
+                type: 'boolean',
+                value: false,
+                help: 'An optional boolean value telling the plugin to hide the credential to the upstream API server. It will be removed by Kong before proxying the request.'
+              }
+            },
+            "key-auth-referer": {
+              meta: {
+                description: 'Add Key Authentication (also referred to as an API key) and referers to your APIs. Consumers then add their key either in a querystring parameter or a header to authenticate their requests.'
               },
               'key_names': {
                 type: 'text',

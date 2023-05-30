@@ -25,6 +25,11 @@
                   value : "key-auth"
               },
               {
+                  name: "Key Auth Referer",
+                  description: "Generate an API key referer for each consumer.",
+                  value: "key-auth-referer"
+              },
+              {
                   name : "JWT",
                   description : "Generate JWT credentials for each consumer." +
                   " The default values will be used for all of JWT configuration properties" +

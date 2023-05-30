@@ -7,28 +7,21 @@
   'use strict';
 
   angular.module('frontend.consumers')
-    .controller('CreateKeyAuthController', [
+    .controller('CreateKeyAuthRefererController', [
       '$scope', '$rootScope', '$log','ConsumerService','MessageService','$uibModalInstance', 'KongErrorService', '_consumer',
       function controller($scope, $rootScope, $log, ConsumerService, MessageService, $uibModalInstance, KongErrorService, _consumer ) {
 
           $scope.consumer = _consumer
-          $scope.createApiKey = createApiKey
+          $scope.createApiKeyReferer = createApiKeyReferer
           $scope.close = function(){
               $uibModalInstance.dismiss()
           }
 
-          $scope.key = {
-              value : ''
-          }
-
-          function createApiKey() {
-
-              var body = $scope.key.value ? {key : $scope.key.value} : {}
-              console.log('create api key body');
-              console.log(body);
-              ConsumerService.addCredential($scope.consumer.id,'key-auth',body).then(function(resp){
-                  $log.debug("Key generated",resp)
-                  $rootScope.$broadcast('consumer.key.created')
+          function createApiKeyReferer() {
+              console.log('api key referer credentials', $scope.data);
+              ConsumerService.addCredential($scope.consumer.id, 'key-auth-referer', $scope.data).then(function(resp){
+                  $log.debug("Key Referer generated",resp)
+                  $rootScope.$broadcast('consumer.key-auth-referer.created')
                   $uibModalInstance.dismiss()
               }).catch(function(err){
                   $log.error(err)

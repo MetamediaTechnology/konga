@@ -342,9 +342,11 @@ var KongPluginService = _.merge(_.cloneDeep(require('./KongService')), {
             description: "Expose metrics related to Kong and proxied upstream services in Prometheus exposition format"
           },
           "zipkin": {
-            description: "Propagate Zipkin distributed tracing spans, and report spans to a Zipkin server."
+            description: "Propagate Zipkin distributed tracing spans, and report spans to a Zipkin server"
           },
-
+          "opentelemetry": {
+            description: "Propagate spans and report space to a backend server through OTLP protocol"
+          },
         }
       },
       {
@@ -360,6 +362,12 @@ var KongPluginService = _.merge(_.cloneDeep(require('./KongService')), {
           },
           "correlation-id": {
             description: "Correlate requests and responses using a unique ID"
+          },
+          "grpc-gateway": {
+            description: "Access gRPC services through HTTP REST"
+          },
+          "grpc-web": {
+            description: "Allow browser clients to call gRPC services"
           },
         }
       },

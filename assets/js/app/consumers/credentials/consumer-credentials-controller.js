@@ -17,6 +17,7 @@
 
 
         $scope.keys;
+        $scope.key_referers;
         $scope.jwts;
         $scope.basic_auth_credentials;
         $scope.hmac_auth_credentials;
@@ -34,6 +35,12 @@
             name: 'API KEYS',
             icon: 'mdi-key',
             fetchFunc: fetchKeys
+          },
+          {
+            id: 'key-auth-referer',
+            name: 'API KEY REFERERS',
+            icon: 'mdi-key-change',
+            fetchFunc: fetchKeyReferers
           },
           {
             id: 'hmac-auth',
@@ -71,11 +78,13 @@
 
         $scope.updateConsumerDetails = updateConsumerDetails
         $scope.createApiKey = createApiKey
+        $scope.createApiKeyReferer = createApiKeyReferer
         $scope.createJWT = createJWT
         $scope.manageBasicAuth = manageBasicAuth
         $scope.createOAuth2 = createOAuth2
         $scope.createHMAC = createHMAC
         $scope.deleteKey = deleteKey
+        $scope.deleteKeyReferer = deleteKeyReferer
         $scope.deleteJWT = deleteJWT
         $scope.deleteOAuth2 = deleteOAuth2
         $scope.deleteBasicAuthCredentials = deleteBasicAuthCredentials
@@ -92,7 +101,6 @@
           return group.id === $scope.activeGroup;
         }
 
-
         function deleteHMACAuthCredentials($index, credentials) {
           DialogService.confirm(
             "Delete Credentials", "Really want to delete the selected credentials?",
@@ -106,7 +114,6 @@
                     fetchHMACAuthCredentials()
                   }
                 )
-
             }, function decline() {
             })
         }
@@ -124,7 +131,6 @@
                     fetchBasicAuthCredentials()
                   }
                 )
-
             }, function decline() {
             })
         }
@@ -142,7 +148,6 @@
                     fetchOAuth2()
                   }
                 )
-
             }, function decline() {
             })
         }
@@ -160,7 +165,6 @@
                     fetchJWTs()
                   }
                 )
-
             }, function decline() {
             })
         }
@@ -178,7 +182,23 @@
                     fetchKeys()
                   }
                 )
+            }, function decline() {
+            })
+        }
 
+        function deleteKeyReferer($index, key) {
+          DialogService.confirm(
+            "Delete Key Referer", "Really want to delete the selected key referer?",
+            ['No don\'t', 'Yes! delete it'],
+            function accept() {
+              ConsumerService
+                .removeCredential($scope.consumer.id, 'key-auth-referer', key.id)
+                .then(
+                  function onSuccess(result) {
+                    MessageService.success('Key referer deleted successfully');
+                    fetchKeyReferers()
+                  }
+                )
             }, function decline() {
             })
         }
@@ -199,6 +219,21 @@
           });
         }
 
+        function createApiKeyReferer() {
+          $uibModal.open({
+            animation: true,
+            ariaLabelledBy: 'modal-title',
+            ariaDescribedBy: 'modal-body',
+            templateUrl: 'js/app/consumers/credentials/create-api-key-referer-modal.html',
+            controller: 'CreateKeyAuthRefererController',
+            controllerAs: '$ctrl',
+            resolve: {
+              _consumer: function () {
+                return $scope.consumer
+              }
+            }
+          });
+        }
 
         function manageBasicAuth(cred) {
           $uibModal.open({
@@ -267,7 +302,6 @@
           });
         }
 
-
         function updateConsumerDetails() {
           ConsumerService.update($scope.consumer.id, {
             username: $scope.consumer.username,
@@ -282,7 +316,6 @@
             $scope.errors = err.data.customMessage || {}
           })
         }
-
 
         function fetchBasicAuthCredentials() {
           ConsumerService.loadCredentials($scope.consumer.id, 'basic-auth')
@@ -306,7 +339,14 @@
               console.log("FETCH KEYS CREDS =>", res.data);
               $scope.keys = res.data
             })
+        }
 
+        function fetchKeyReferers() {
+          ConsumerService.loadCredentials($scope.consumer.id, 'key-auth-referer')
+            .then(function (res) {
+              console.log("FETCH KEY REFERER CREDS =>", res.data);
+              $scope.key_referers = res.data
+            })
         }
 
         function fetchJWTs() {
@@ -315,7 +355,6 @@
               console.log("FETCH JWT AUTH CREDS =>", res.data);
               $scope.jwts = res.data
             })
-
         }
 
         function fetchOAuth2() {
@@ -338,6 +377,10 @@
           fetchKeys()
         })
 
+        $scope.$on('consumer.key-auth-referer.created', function (ev, group) {
+          fetchKeyReferers()
+        })
+
         $scope.$on('consumer.oauth2.created', function (ev, group) {
           fetchOAuth2()
         })
@@ -349,7 +392,6 @@
         $scope.$on('consumer.basic-auth.created', function (ev, group) {
           fetchBasicAuthCredentials()
         })
-
 
         $scope.$on('consumer.hmac-auth.created', function (ev, group) {
           fetchHMACAuthCredentials()

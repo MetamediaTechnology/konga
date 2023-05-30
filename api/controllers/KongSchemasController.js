@@ -37,6 +37,23 @@ module.exports = {
 
             },
             {
+                name: "key-auth-referer",
+                fields: [
+                    {
+                        name: "key",
+                        description: "You can optionally set your own unique key to authenticate the client. If missing, the plugin will generate one.",
+                        type: "string"
+                    },
+                    {
+                        name: "authorized_referer",
+                        description: "Authorized referer",
+                        type: "string",
+                        required: true
+                    }
+                ]
+
+            },
+            {
                 name : "oauth2",
                 fields : [
                     {
