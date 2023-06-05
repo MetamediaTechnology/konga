@@ -10,10 +10,11 @@ COPY bower.json /app/bower.json
 
 WORKDIR /app
 
-RUN npm --unsafe-perm --production ci \
-    && apk del git
+RUN npm --unsafe-perm --production ci 
 
 COPY . /app
+
+RUN cd assets/js/app && npm run bower-deps
 
 RUN rm -rf /var/cache/apk/* \
         /app/.git \
@@ -21,7 +22,8 @@ RUN rm -rf /var/cache/apk/* \
         /app/test \
     && adduser -H -S -g "Konga service owner" -D -u 1200 -s /sbin/nologin konga \
     && mkdir /app/kongadata /app/.tmp \
-    && chown -R 1200:1200 /app/views /app/kongadata /app/.tmp
+    && chown -R 1200:1200 /app/views /app/kongadata /app/.tmp \
+    && apk del git
 
 EXPOSE 1337
 
