@@ -64,6 +64,7 @@ var defaultModel = _.merge(_.cloneDeep(require('../base/Model')), {
 
   afterDestroy: function (values, cb) {
 
+    /*
     sails.log("User:afterDestroy:called => ", values);
 
 
@@ -78,6 +79,11 @@ var defaultModel = _.merge(_.cloneDeep(require('../base/Model')), {
     })
 
     async.series(fns, cb);
+    */
+    sails.log("User:afterDestroy:called => ", values);   
+
+    sails.models.passport.destroy({user: values.id}).exec(cb);
+
 
   },
 

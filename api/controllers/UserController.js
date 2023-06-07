@@ -25,7 +25,7 @@ module.exports = _.merge(_.cloneDeep(require('../base/Controller')), {
     },
 
     update : async function(req,res) {
-        sails.log(req.body);
+        //sails.log(req.body);
 
         try {
             var user = req.body;
@@ -64,5 +64,37 @@ module.exports = _.merge(_.cloneDeep(require('../base/Controller')), {
             sails.log.error('error on update user', err);
             return res.serverError(err);
         }        
+    },
+
+    create : async function(req,res) {
+        try {
+            var user = req.body;
+            var passports = req.body.passports
+    
+            // Delete unwanted properties
+            delete user.passports;t
+            delete user.password_confirmation;
+
+            var createdPassports = await sails.models.passport
+            .create(passports).fetch();
+
+            if(!createdPassports){
+               return res.json();
+            }
+
+            var userCreated = await sails.models.user
+                .create({...user, passports: createdPassports.id}).fetch();    
+    
+            if(!userCreated) {
+                return res.json();
+            }
+                
+            return res.json(userCreated);
+        }catch(err){
+            sails.log.error('error on create user', err);
+            return res.serverError(err);
+        }        
     }
+
+
 });
