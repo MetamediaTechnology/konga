@@ -72,7 +72,7 @@ module.exports = _.merge(_.cloneDeep(require('../base/Controller')), {
             var passports = req.body.passports
     
             // Delete unwanted properties
-            delete user.passports;t
+            delete user.passports;
             delete user.password_confirmation;
 
             var createdPassports = await sails.models.passport
