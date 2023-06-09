@@ -13,9 +13,16 @@ var async = require("async");
  * For more info on Sails models, see:
  * http://sailsjs.org/#/documentation/concepts/ORM
  */
+let migrate
+if(process.env.NODE_ENV == 'production') {
+    migrate = "safe";
+} else {
+    migrate = "alter";
+}
+
 module.exports.models = {
     datastore: 'default',
-    migrate: 'alter',
+    migrate: migrate,
     fetchRecordsOnUpdate: true,
     fetchRecordsOnDestroy: true,
     fetchRecordsOnCreate: true,

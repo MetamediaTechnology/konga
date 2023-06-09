@@ -43,7 +43,9 @@ module.exports = {
   },
 
   // Keep data of response errors in production mode
-  keepResponseErrors : true
+  keepResponseErrors : true,
 
-
+  sockets: {
+    onlyAllowOrigins: process.env.KONGA_HOST.split(',')|| ["http://127.0.0.1:"+(process.env.PORT || 1337)]
+    }
 };
