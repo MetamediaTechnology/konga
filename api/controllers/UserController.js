@@ -69,7 +69,7 @@ module.exports = _.merge(_.cloneDeep(require('../base/Controller')), {
     create : async function(req,res) {
         try {
             var user = req.body;
-            var passports = req.body.passports
+            var passports = req.body.passports;
     
             // Delete unwanted properties
             delete user.passports;
